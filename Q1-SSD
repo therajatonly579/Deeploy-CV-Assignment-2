@@ -1,0 +1,57 @@
+pip install opencv-python
+
+import cv2
+
+def main():
+    # Load the pre-trained SSD model and configuration file
+    model_path = "C:\\Users\\rajat\\Downloads\\frozen_inference_graph.pb"  # Replace with your model path
+    config_path = "C:\\Users\rajat\\Downloads\\ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"  # Replace with your config path
+
+    # Load class labels for COCO dataset
+    labels_path = "C:\\Users\\rajat\\Downloads\\coco_labels.txt"  # Replace with the path to your labels file
+    with open(labels_path, 'r') as f:
+        labels = f.read().strip().split('\n')
+
+    # Load the SSD model
+    net = cv2.dnn_DetectionModel(model_path, config_path)
+    net.setInputSize(320, 320)  # Input size for SSD
+    net.setInputScale(1.0 / 127.5)  # Scale factor
+    net.setInputMean((127.5, 127.5, 127.5))  # Mean subtraction
+    net.setInputSwapRB(True)  # Swap R and B channels
+
+    # Open laptop camera
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("Error: Could not open video stream.")
+        return
+
+    print("Press 'Q' to exit.")
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Error: Could not read frame.")
+            break
+
+        # Perform object detection
+        class_ids, confidences, boxes = net.detect(frame, confThreshold=0.5)
+
+        # Draw detections on the frame
+        for class_id, confidence, box in zip(class_ids.flatten(), confidences.flatten(), boxes):
+            label = f"{labels[class_id]}: {confidence:.2f}"
+            x, y, w, h = box
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+        # Display the frame
+        cv2.imshow("Real-Time Object Detection", frame)
+
+        # Exit on 'Q' key
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # Release resources
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
