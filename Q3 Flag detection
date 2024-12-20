@@ -1,0 +1,23 @@
+import torch
+
+# Load YOLOv5 model (automatically downloads weights if not found locally)
+model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+
+# Perform detection on an image
+results = model("C:\\Users\\rajat\\Downloads\\istockphoto-2128312283-1024x1024.jpg")
+
+# Display results
+results.show()  # Show image with detections
+results.save()  # Save image with detections in runs/detect
+
+import torch
+
+# Load YOLOv5 model (automatically downloads weights if not found locally)
+model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+
+# Perform detection on an image
+results = model("C:\\Users\\rajat\\Downloads\\istockphoto-2128312283-1024x1024.jpg")
+
+# Display results
+results.show()  # Show image with detections
+results.save()  # Save image with detections in runs/detect
